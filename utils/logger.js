@@ -2,8 +2,9 @@ import fs from 'fs/promises';
 import path from 'path';
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
-const execAsync = promisify(exec);
+import { connectDB } from "./db.js"; 
 
+const execAsync = promisify(exec);
 
 const LOG_DIR = path.join(process.cwd(), 'logs');
 const LOG_FILE = path.join(LOG_DIR, 'audit.log');
@@ -51,7 +52,22 @@ export async function logAction(user, action, riskLevel = 1) {
     const riskLabel = RISK_LEVELS[riskLevel] || 'UNKNOWN';
     const entry = `[${timestamp}] [${user}] [${riskLabel}] ${action}\n`;
 
+    // --- File logging ---
     await fs.appendFile(LOG_FILE, entry, { flag: 'a' });
+
+    // --- MongoDB logging ---
+    try {
+      const db = await connectDB();
+      await db.collection('logs').insertOne({
+        timestamp,
+        user,
+        risk: riskLabel,
+        action
+      });
+    } catch (dbErr) {
+      console.error('MongoDB log insert failed:', dbErr.message);
+    }
+
   } catch (err) {
     console.error('Log write failed:', err);
   }

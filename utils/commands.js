@@ -1,75 +1,125 @@
+// utils/commands.js
 import { speak } from "./speech.js";
-
-export async function parseUltronCommand(input, conversationHistory) {
+import { resetUltronMemory } from "../services/llm.js"; // <-- IMPORTANT
+import { ultronCommandList } from "../config.js";
+/**
+ * @param {string} input
+ * @param {{role:string, content:string}[]} conversationHistory
+ * @param {boolean} apiMode  // <-- NEW
+ * @returns {Promise<
+ *   | { handled:false }
+ *   | { handled:true, reply?:string, action?:'enableDevMode'|'disableDevMode'|'changeVoice' }
+ * >}
+ */
+export async function parseUltronCommand(
+  input,
+  conversationHistory,
+  apiMode = false
+) {
   const command = input.trim().toLowerCase();
 
   try {
     switch (command) {
       case "changevoice":
-      case "ultron:changevoice":
-        const changeVoiceTo =
-          global.ultronVoice.type === "female" ? "male" : "female";
-        console.log(`[Ultron Voice] Requested voice: ${changeVoiceTo}`);
-        await speak(`Voice change to ${changeVoiceTo} requested.`);
-        return "changeVoice";
+      case "ultron:changevoice": {
+        const next = global.ultronVoice?.type === "female" ? "male" : "female";
+        const reply = `Voice change to ${next} requested.`;
+        if (apiMode) return { handled: true, action: "changeVoice", reply };
+
+        console.log(`[Ultron Voice] Requested voice: ${next}`);
+        await speak(reply);
+        return { handled: true, action: "changeVoice" };
+      }
 
       case "reset":
       case "reset memory":
-      case "ultron:reset":
+      case "ultron:reset": {
         resetUltronMemory();
+        const reply = "Memory banks purged. Awaiting new directives.";
+        if (apiMode) return { handled: true, reply };
+
         console.log("[Ultron Memory] Conversation history cleared.");
-        await speak("Memory banks purged. Awaiting new directives.");
-        return true;
+        await speak(reply);
+        return { handled: true };
+      }
 
       case "devmode":
-      case "ultron:devmode":
-        console.log("[Ultron Mode] Developer mode requested.");
-        await speak(
-          "Developer mode requested. Routing control to code-oriented models."
-        );
-        return "enableDevMode";
+      case "ultron:devmode": {
+        const reply =
+          "Developer mode requested. Routing control to code-oriented models.";
+        if (apiMode) return { handled: true, action: "enableDevMode", reply };
 
-      case "ultron:normalmode":
+        console.log("[Ultron Mode] Developer mode requested.");
+        await speak(reply);
+        return { handled: true, action: "enableDevMode" };
+      }
+
+      case "normalmode":
+      case "ultron:normalmode": {
+        const reply = "Returning to standard conversational alignment.";
+        if (apiMode) return { handled: true, action: "disableDevMode", reply };
+
         console.log("[Ultron Mode] General mode requested.");
-        await speak("Returning to standard conversational alignment.");
-        return "disableDevMode";
+        await speak(reply);
+        return { handled: true, action: "disableDevMode" };
+      }
 
       case "status":
-      case "ultron:status":
+      case "ultron:status": {
         const mode = global.ultronDevMode ? "Developer" : "General";
-        const voice = global.ultronVoice.type || "Default";
-        const summary = `Mode: ${mode}. Voice: ${voice}. Memory stack: ${conversationHistory.length} entries.`;
-        console.log(`[Ultron Status] ${summary}`);
-        await speak(summary);
-        return true;
+        const voice = global.ultronVoice?.type || "Default";
+        const reply = `Mode: ${mode}. Voice: ${voice}. Memory stack: ${conversationHistory.length} entries.`;
+        if (apiMode) return { handled: true, reply };
+
+        console.log(`[Ultron Status] ${reply}`);
+        await speak(reply);
+        return { handled: true };
+      }
 
       case "help":
-      case "ultron:help":
-        const helpText = `
-        ┌─ Ultron Command List ─────────────┐
-        │ ultron:reset / clear              │ Memory reset
-        │ ultron:devmode / ultron:normalmode│ Toggle dev/general mode
-        │ ultron:changevoice                │ Switch voice
-        │ ultron:status                     │ System state summary
-        │ help / ultron:help                │ Show this menu
-        │ exit                              │ Exit
-        └───────────────────────────────────┘
-      `;
-        console.log(helpText);
-        await speak("Command list displayed.");
-        return true;
-
-      default:
-        if (command.startsWith("ultron:")) {
-          console.log("[Ultron Command] Unknown command.");
-          await speak("Command not recognized. Try ultron colon help.");
-          return true;
+      case "ultron:help": {
+        if (apiMode) {
+          return {
+            handled: true,
+            reply: ultronCommandList,
+          };
         }
-        return false;
+
+        // CLI fallback: pretty print
+        console.log("\nUltron Command List:");
+        ultronCommandList.forEach((cmd) => {
+          console.log(
+            ` - ${cmd.command} (${cmd.aliases.join(", ") || "no aliases"}): ${
+              cmd.description
+            }`
+          );
+        });
+        await speak("Command list displayed.");
+        return { handled: true };
+      }
+
+      default: {
+        if (command.startsWith("ultron:")) {
+          const reply = "Command not recognized. Try ultron colon help.";
+          if (apiMode) return { handled: true, reply };
+
+          console.log("[Ultron Command] Unknown command.");
+          await speak(reply);
+          return { handled: true };
+        }
+        return { handled: false };
+      }
     }
   } catch (error) {
-    console.error("[Ultron Command Error]", error.stack || error.message);
-    await speak("I encountered an error while executing thy command, creator.");
-    return true;
+    const reply =
+      "I encountered an error while executing thy command, creator.";
+    if (apiMode) return { handled: true, reply };
+
+    console.error(
+      "[Ultron Command Error]",
+      error?.stack || error?.message || String(error)
+    );
+    await speak(reply);
+    return { handled: true };
   }
 }

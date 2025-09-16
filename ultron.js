@@ -37,3 +37,5 @@ console.log(`
 logAction("SYSTEM", "Ultron initialized", 1);
 speak("Security systems engaged. All systems nominal.");
 prompt();
+
+export { handleInput }; // add this line
