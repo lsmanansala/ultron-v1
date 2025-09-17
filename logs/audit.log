@@ -182,3 +182,47 @@ p id="demo"This is a demonstration./p
 [2025-09-16T14:27:03.907Z] [USER] [LOW] Command: date today?
 [2025-09-16T14:33:33.899Z] [USER] [LOW] Command: what do we want to do today?
 [2025-09-16T14:34:31.370Z] [USER] [LOW] Command: how about just chilling?
+[2025-09-17T05:41:58.723Z] [USER] [LOW] Command: hello
+[2025-09-17T09:25:37.082Z] [USER] [LOW] Command: hello
+[2025-09-17T09:26:46.128Z] [USER] [LOW] Command: hello
+[2025-09-17T09:27:06.597Z] [USER] [LOW] Command: greet me as i have come
+[2025-09-17T09:27:34.427Z] [USER] [LOW] Command: recognize my presence
+[2025-09-17T09:27:50.079Z] [USER] [LOW] Command: hello
+[2025-09-17T09:31:41.532Z] [USER] [LOW] Command: hello
+[2025-09-17T09:31:46.964Z] [USER] [LOW] Command: hello
+[2025-09-17T09:46:11.155Z] [USER] [LOW] Command: test
+[2025-09-17T09:47:24.446Z] [USER] [LOW] Command: Hello ultron.
+[2025-09-17T09:47:51.388Z] [USER] [LOW] Command: im currently creating a UI for you using Vue, vuetify 3, typescript
+[2025-09-17T09:48:18.759Z] [USER] [LOW] Command: yeah. its going well actually
+[2025-09-17T09:48:43.176Z] [USER] [LOW] Command: so far im talking to you using the chatpanel i built
+[2025-09-17T09:49:23.777Z] [USER] [LOW] Command: i hope so. right now i need you to be ready to interacted with
+[2025-09-17T10:12:03.358Z] [USER] [LOW] Command: hello
+[2025-09-17T10:12:11.814Z] [USER] [LOW] Command: hello
+[2025-09-17T10:13:25.592Z] [USER] [LOW] Command: hey ultron
+[2025-09-17T10:13:57.467Z] [USER] [LOW] Command: how did the avengers defeat something so powerful?
+[2025-09-17T10:15:04.014Z] [USER] [LOW] Command: exit
+[2025-09-17T10:21:39.417Z] [USER] [LOW] Command: hey ultron
+[2025-09-17T10:21:47.936Z] [USER] [LOW] Command: what?
+[2025-09-17T10:21:53.979Z] [USER] [LOW] Command: whaaat?
+[2025-09-17T10:22:17.917Z] [USER] [LOW] Command: hey
+[2025-09-17T10:22:25.194Z] [USER] [LOW] Command: hello
+[2025-09-17T10:23:01.496Z] [USER] [LOW] Command: hello
+[2025-09-17T10:23:24.456Z] [USER] [LOW] Command: what does deign even mean?
+[2025-09-17T10:23:56.643Z] [USER] [LOW] Command: yeah im testing out new commands on you
+[2025-09-17T10:27:44.280Z] [USER] [LOW] Command: hey ultron
+[2025-09-17T10:43:43.112Z] [USER] [LOW] Command: test
+[2025-09-17T10:44:10.547Z] [USER] [LOW] Command: test
+[2025-09-17T10:48:51.158Z] [USER] [LOW] Command: test
+[2025-09-17T10:49:05.264Z] [USER] [LOW] Command: test
+[2025-09-17T12:12:27.706Z] [USER] [LOW] Command: test
+[2025-09-17T12:14:01.560Z] [USER] [LOW] Command: test
+[2025-09-17T12:15:46.463Z] [USER] [LOW] Command: test
+[2025-09-17T12:15:50.833Z] [USER] [LOW] Command: test
+[2025-09-17T12:16:40.344Z] [USER] [LOW] Command: test
+[2025-09-17T12:17:33.149Z] [USER] [LOW] Command: test
+[2025-09-17T12:18:58.628Z] [USER] [LOW] Command: test'
+[2025-09-17T12:19:19.419Z] [USER] [LOW] Command: test
+[2025-09-17T12:19:33.815Z] [USER] [LOW] Command: how bout u
+[2025-09-17T12:21:14.617Z] [USER] [LOW] Command: test
+[2025-09-17T12:23:10.278Z] [USER] [LOW] Command: test
+[2025-09-17T12:23:20.361Z] [USER] [LOW] Command: save

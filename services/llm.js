@@ -6,7 +6,6 @@ import {
   DEV_MODELS 
 } from '../config.js';
 
-// Model tracking system
 const modelState = {
   activeModels: [...GENERAL_MODELS],
   isDevMode: false,

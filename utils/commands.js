@@ -1,7 +1,8 @@
-// utils/commands.js
 import { speak } from "./speech.js";
-import { resetUltronMemory } from "../services/llm.js"; // <-- IMPORTANT
+import { resetUltronMemory } from "../services/llm.js";
 import { ultronCommandList } from "../config.js";
+import { saveSessionToDB } from "../services/session.js";
+
 /**
  * @param {string} input
  * @param {{role:string, content:string}[]} conversationHistory
@@ -96,6 +97,26 @@ export async function parseUltronCommand(
         });
         await speak("Command list displayed.");
         return { handled: true };
+      }
+      // === NEW: save current session ===
+      case "ultron:save": {
+        await saveSessionToDB(conversationHistory);
+        const reply = "Session has been securely archived, creator.";
+        if (apiMode) return { handled: true, reply };
+
+        console.log("[Ultron Save] Session saved to database.");
+        await speak(reply);
+        return { handled: true };
+      }
+
+      case "exit":
+      case "ultron:exit": {
+        const reply = "Ultron shutting down. Farewell, creator.";
+        if (apiMode) return { handled: true, action: "exit", reply };
+
+        console.log("[Ultron Exit] Shutting down.");
+        await speak(reply);
+        process.exit(0); // end process
       }
 
       default: {
