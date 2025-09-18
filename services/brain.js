@@ -4,7 +4,7 @@ import { speak, changeVoice } from "../utils/speech.js";
 import { logAction, logToWindowsEvent } from "../utils/logger.js";
 import { sanitizeInput, sanitizeReply } from "../utils/security.js";
 import { parseUltronCommand } from "../utils/commands.js";
-import { connectDB } from "../utils/db.js";
+import { connectDB } from "../api/utils/db.js";
 
 const conversationHistory = [];
 
@@ -20,10 +20,11 @@ function cleanReply(text) {
     .trim();
 }
 
-function startSession(firstMessage) {
+function startSession(firstMessage, source) {
   currentSession = {
-    title: firstMessage.slice(0, 50), // first 50 chars of first user msg
+    title: firstMessage.slice(0, 50) || `Session ${new Date().toLocaleString()}`,
     date: new Date(),
+    source,
     messages: [],
   };
   console.log(`[Ultron Session] Started: "${currentSession.title}"`);
@@ -33,7 +34,7 @@ async function saveSession() {
   if (!currentSession) return;
   try {
     const db = await connectDB();
-    await db.collection("conversations").insertOne(currentSession);
+    await db.collection("sessions").insertOne(currentSession);
     console.log(`[MongoDB] Saved session: "${currentSession.title}"`);
   } catch (err) {
     console.error("[MongoDB] Failed to save session:", err.message);
@@ -63,19 +64,23 @@ export async function handleInput(
   }
 
   if (!currentSession) {
-    startSession(sanitizedInput);
+    startSession(sanitizedInput, source);
   }
 
   const result = await parseUltronCommand(
     sanitizedInput,
     conversationHistory,
-    apiMode
+    apiMode,
+    source,
+    currentSession
   );
 
   if (result?.handled) {
+    console.log(result)
     if (result.action === "enableDevMode") global.ultronDevMode = true;
     if (result.action === "disableDevMode") global.ultronDevMode = false;
     if (result.action === "changeVoice") changeVoice();
+    if (result.action === "saveSession") await saveSession()
 
     if (apiMode) {
       return result.reply || "";

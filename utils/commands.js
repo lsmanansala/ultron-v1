@@ -1,7 +1,7 @@
 import { speak } from "./speech.js";
 import { resetUltronMemory } from "../services/llm.js";
 import { ultronCommandList } from "../config.js";
-import { saveSessionToDB } from "../services/session.js";
+import { saveSessionToDB } from "../api/services/sessions.js";
 
 /**
  * @param {string} input
@@ -15,7 +15,9 @@ import { saveSessionToDB } from "../services/session.js";
 export async function parseUltronCommand(
   input,
   conversationHistory,
-  apiMode = false
+  apiMode = false,
+  source = 'unknown',
+  currentSession
 ) {
   const command = input.trim().toLowerCase();
 
@@ -100,13 +102,12 @@ export async function parseUltronCommand(
       }
       // === NEW: save current session ===
       case "ultron:save": {
-        await saveSessionToDB(conversationHistory);
-        const reply = "Session has been securely archived, creator.";
-        if (apiMode) return { handled: true, reply };
+        const reply = "Session will be securely archived, creator.";
+        if (apiMode) return { handled: true, reply, action: "saveSession" };
 
         console.log("[Ultron Save] Session saved to database.");
         await speak(reply);
-        return { handled: true };
+        return { handled: true, action: "saveSession"  };
       }
 
       case "exit":

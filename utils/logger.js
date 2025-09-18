@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { exec } from 'node:child_process';
 import { promisify } from 'node:util';
-import { connectDB } from "./db.js"; 
+import { connectDB } from "../api/utils/db.js";
 
 const execAsync = promisify(exec);
 

@@ -10,8 +10,9 @@ export const GENERAL_MODELS  = [
   'deepseek/deepseek-chat-v3-0324:free',
 ];
 export const DEV_MODELS = [
-  'deepseek/deepseek-r1:free',
-  'mistralai/mistral-7b-instruct:free'
+  'openai/gpt-4.1-mini',
+  'google/gemini-2.5-flash',
+  'anthropic/claude-sonnet-4'
 ];
 
 export const ultronCommandList = [
