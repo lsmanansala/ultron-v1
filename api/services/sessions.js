@@ -20,9 +20,10 @@ export async function saveSessionToDB(
   return result.insertedId;
 }
 
-export async function listSessions() {
+export async function listSessions(source) {
+  console.log('src', source)
   const db = await connectDB();
-  return db.collection("sessions").find({}).sort({date: -1}).toArray()
+  return db.collection("sessions").find({source: source}).sort({date: -1}).toArray()
 }
 
 export async function getSession(id) {

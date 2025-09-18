@@ -6,7 +6,8 @@ const router = express.Router();
 
 router.get("/", async (_req, res) => {
   try {
-    const sessions = await listSessions();
+    const source = _req.get("X-Ultron-Source") || "api";
+    const sessions = await listSessions(source);
     res.json(sessions);
   } catch (err) {
     console.error("[API] sessions list error:", err);

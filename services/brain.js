@@ -5,6 +5,7 @@ import { logAction, logToWindowsEvent } from "../utils/logger.js";
 import { sanitizeInput, sanitizeReply } from "../utils/security.js";
 import { parseUltronCommand } from "../utils/commands.js";
 import { connectDB } from "../api/utils/db.js";
+import { saveSessionToDB } from '../api/services/sessions.js'
 
 const conversationHistory = [];
 
@@ -27,7 +28,7 @@ function startSession(firstMessage, source) {
     source,
     messages: [],
   };
-  console.log(`[Ultron Session] Started: "${currentSession.title}"`);
+  console.log(`[Ultron Session] Started: "${currentSession.title}" on ${source}`);
 }
 
 async function saveSession() {
@@ -80,7 +81,7 @@ export async function handleInput(
     if (result.action === "enableDevMode") global.ultronDevMode = true;
     if (result.action === "disableDevMode") global.ultronDevMode = false;
     if (result.action === "changeVoice") changeVoice();
-    if (result.action === "saveSession") await saveSession()
+    if (result.action === "saveSession") await saveSessionToDB(conversationHistory, source)
 
     if (apiMode) {
       return result.reply || "";
