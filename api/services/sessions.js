@@ -21,7 +21,6 @@ export async function saveSessionToDB(
 }
 
 export async function listSessions(source) {
-  console.log('src', source)
   const db = await connectDB();
   return db.collection("sessions").find({source: source}).sort({date: -1}).toArray()
 }

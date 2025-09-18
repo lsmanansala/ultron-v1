@@ -4,6 +4,7 @@ import "dotenv/config";
 
 import { handleInput } from "../services/brain.js";
 import sessionsRouter from "./sessions.js";
+import ragnarokRoutes from "./routes/ragnarok.js";
 
 const app = express();
 const PORT = process.env.PORT || 3030;
@@ -30,6 +31,9 @@ app.post("/api/command", async (req, res) => {
 
 // --- Sessions ---
 app.use("/api/sessions", sessionsRouter);
+
+// ragnarok
+app.use("/api/ragnarok", ragnarokRoutes);
 
 app.listen(PORT, () => {
   console.log(`[Ultron API] Listening at http://localhost:${PORT}`);
