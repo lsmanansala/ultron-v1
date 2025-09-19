@@ -8,6 +8,7 @@ import ragnarokAccountsRoutes from "./routes/ragnarokAccounts.js";
 import ragnarokCraftingRoutes from "./routes/ragnarokCrafting.js";
 import ragnarokIncomeRoutes from "./routes/ragnarokIncome.js";
 import ragnarokGoldRoutes from "./routes/ragnarokGold.js";
+import ragnarokFinanceRoutes from "./routes/ragnarokFinance.js"
 
 const app = express();
 const PORT = process.env.PORT || 3030;
@@ -38,8 +39,9 @@ app.use("/api/sessions", sessionsRouter);
 // ragnarok
 app.use("/api/ragnarok", ragnarokAccountsRoutes);
 app.use("/api/ragnarok/crafts", ragnarokCraftingRoutes);
-app.use("/api/ragnarok", ragnarokIncomeRoutes);
-app.use("/api/ragnarok", ragnarokGoldRoutes);
+app.use("/api/ragnarok/income", ragnarokIncomeRoutes);
+app.use("/api/ragnarok/goldfarm", ragnarokGoldRoutes);
+app.use("/api/ragnarok/finance", ragnarokFinanceRoutes);
 
 app.listen(PORT, () => {
   console.log(`[Ultron API] Listening at http://localhost:${PORT}`);
