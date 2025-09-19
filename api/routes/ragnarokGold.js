@@ -4,7 +4,8 @@ import {
   addGoldFarm,
   listGoldFarms,
   summarizeGoldFarms,
-  listGoldFarmsByDate
+  listGoldFarmsByDate,
+  updateGoldFarm 
 } from "../../modules/ragnarok/income.js";
 
 const router = express.Router();
@@ -37,6 +38,22 @@ router.post("/goldfarm", async (req, res) => {
     res.json({ success: true, id });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Update a gold farm record
+router.put("/goldfarm/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const success = await updateGoldFarm(id, req.body);
+
+    if (!success) {
+      return res.status(404).json({ error: "Gold farm record not found or not updated" });
+    }
+
+    res.json({ message: "Gold farm record updated successfully" });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 });
 

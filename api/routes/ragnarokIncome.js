@@ -6,6 +6,7 @@ import {
   deleteIncome,
   getIncomeDetail,
   getIncomeSummary,
+  updateIncome,
 } from "../../modules/ragnarok/income.js";
 
 const router = express.Router();
@@ -41,6 +42,22 @@ router.get("/income/:id", async (req, res) => {
   const craft = await getIncomeDetail(req.params.id);
   if (!craft) return res.status(404).json({ error: "Not found" });
   res.json(craft);
+});
+
+// Update an income record
+router.put("/income/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const success = await updateIncome(id, req.body);
+
+    if (!success) {
+      return res.status(404).json({ error: "Income record not found or not updated" });
+    }
+
+    res.json({ message: "Income record updated successfully" });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
 });
 
 // Delete income entry
