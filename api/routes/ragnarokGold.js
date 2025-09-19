@@ -1,17 +1,16 @@
 // api/routes/ragnarokGold.js
 import express from "express";
 import {
-  addGoldFarm,
   listGoldFarms,
   summarizeGoldFarms,
   listGoldFarmsByDate,
   updateGoldFarm 
 } from "../../modules/ragnarok/income.js";
-
+import {addGoldFarm} from '../../modules/ragnarok/finance.js'
 const router = express.Router();
 
 // Filter gold farms by date range
-router.get("/goldfarm/filter", async (req, res) => {
+router.get("/filter", async (req, res) => {
   try {
     const { start, end } = req.query;
 
@@ -27,7 +26,7 @@ router.get("/goldfarm/filter", async (req, res) => {
 });
 
 // Add gold farm run
-router.post("/goldfarm", async (req, res) => {
+router.post("/", async (req, res) => {
   const { account, goldEarned, hours } = req.body;
   if (!account || !goldEarned) {
     return res.status(400).json({ error: "Missing account or goldEarned" });
@@ -42,7 +41,7 @@ router.post("/goldfarm", async (req, res) => {
 });
 
 // Update a gold farm record
-router.put("/goldfarm/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const success = await updateGoldFarm(id, req.body);
@@ -58,13 +57,13 @@ router.put("/goldfarm/:id", async (req, res) => {
 });
 
 // List all runs
-router.get("/goldfarm", async (_, res) => {
+router.get("/", async (_, res) => {
   const runs = await listGoldFarms();
   res.json(runs);
 });
 
 // Summary with optional start/end query
-router.get("/goldfarm/summary", async (req, res) => {
+router.get("/summary", async (req, res) => {
   try {
     const { start, end } = req.query;
     const summary = await summarizeGoldFarms(start, end);

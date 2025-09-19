@@ -56,7 +56,6 @@ export async function addGoldFarm(account, goldEarned, hours = 3) {
     type: "gold",
     zennyEquivalent,
     createdAt: new Date(),
-    linkedGoldFarmId: result.insertedId, // optional, link back to gold farm
   };
 
   await db.collection("ragnarok_income").insertOne(incomeEntry);

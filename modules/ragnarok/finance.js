@@ -36,6 +36,37 @@ async function updateTotals(db, type, amount, isExpense = false) {
   return doc;
 }
 
+export async function addGoldFarm(account, goldEarned, hours = 3) {
+  const db = await connectDB();
+
+  const zennyEquivalent = goldEarned * GOLD_TO_ZENNY;
+  const type = "gold";
+  // Gold farm entry
+  const entry = {
+    account,
+    goldEarned,
+    hours,
+    type,
+    zennyEquivalent,
+    createdAt: new Date(),
+  };
+
+  const result = await db.collection("ragnarok_goldfarm").insertOne(entry);
+
+  // 🔥 Automatically create an income entry as well
+  const incomeEntry = {
+    source: `GOLD FARM | ${account}`,   // formatted as requested
+    amount: goldEarned,
+    type,
+    zennyEquivalent,
+    createdAt: new Date(),
+  };
+
+  await db.collection("ragnarok_income").insertOne(incomeEntry);
+  await updateTotals(db, "gold", goldEarned, false);
+  return result.insertedId;
+}
+
 // ===== INCOME =====
 export async function addIncome(source, amount, type = "zenny") {
   const db = await connectDB();
@@ -54,6 +85,46 @@ export async function addIncome(source, amount, type = "zenny") {
 export async function listIncome() {
   const db = await connectDB();
   return db.collection("ragnarok_income").find().sort({ createdAt: -1 }).toArray();
+}
+
+export async function updateIncome(id, updates) {
+  const db = await connectDB();
+
+  // Ensure valid ObjectId
+  let _id;
+  try {
+    _id = new ObjectId(id);
+  } catch (err) {
+    throw new Error("Invalid income ID");
+  }
+
+  const incomeColl = db.collection("ragnarok_income");
+  const existing = await incomeColl.findOne({ _id });
+  if (!existing) throw new Error("Income record not found");
+
+  // Roll back old totals first
+  await updateTotals(db, existing.type, existing.amount, true);
+
+  // Prepare new values
+  const newAmount = updates.amount ?? existing.amount;
+  const newType = updates.type ?? existing.type;
+  const newSource = updates.source ?? existing.source;
+
+  const updatePayload = {
+    source: newSource,
+    amount: newAmount,
+    type: newType,
+    zennyEquivalent: toZenny(newAmount, newType),
+    updatedAt: new Date(),
+  };
+
+  // Update document
+  await incomeColl.updateOne({ _id }, { $set: updatePayload });
+
+  // Apply new totals
+  await updateTotals(db, newType, newAmount, false);
+
+  return true;
 }
 
 // ===== EXPENSES =====

@@ -39,7 +39,6 @@ router.get("/", async (_, res) => {
 // Summary
 router.get("/summary", async (req, res) => {
   const summary = await getIncomeSummary();
-  console.log(summary);
   res.json(summary);
 });
 
